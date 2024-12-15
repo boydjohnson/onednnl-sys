@@ -6,6 +6,8 @@ fn main() {
         .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .constified_enum_module("dnnl_.*")
+        .generate_comments(true)
+        .clang_arg("-fretain-comments-from-system-headers")
         .generate()
         .unwrap();
 
