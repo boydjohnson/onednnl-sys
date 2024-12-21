@@ -45,6 +45,7 @@ jobs:
           sudo apt update
 
       - name: Install Intel oneAPI DNNL version 2025.0.1
+        if: steps.cache-oneapi.outputs.cache-hit != 'true'
         run: sudo apt install -y intel-oneapi-dnnl-devel=2025.0.1-*
 
       - name: Build onednnl-sys bindings
