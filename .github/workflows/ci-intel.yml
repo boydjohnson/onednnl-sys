@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       RUSTFLAGS: -D warnings
+      CACHE_NUMBER: 1
     strategy:
       matrix:
         rust:
@@ -46,19 +47,22 @@ jobs:
 
       - name: Install Intel oneAPI DNNL version 2025.0.1
         if: steps.cache-oneapi.outputs.cache-hit != 'true'
-        run: sudo apt install -y intel-oneapi-dnnl-devel=2025.0.1-*
+        run: sudo apt install -y intel-oneapi-dnnl-devel=2025.0.1-* intel-oneapi-compiler-dpcpp-cpp-common-2025.0
 
       - name: Build onednnl-sys bindings
         run: |
           source /opt/intel/oneapi/setvars.sh
           cargo build
+          cargo build --all-features
 
       - name: Run tests
         run: |
           source /opt/intel/oneapi/setvars.sh
           cargo test
+          cargo test --all-features
       
       - name: Run docs
         run: |
           source /opt/intel/oneapi/setvars.sh
           cargo doc
+          cargo doc --all-features
