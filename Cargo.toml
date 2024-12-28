@@ -6,7 +6,12 @@ edition = "2021"
 [lib]
 doctest = false
 
+[features]
+opencl-gpu-runtime = []
+sycl-gpu-runtime = []  
+
 [dependencies]
 
 [build-dependencies]
 bindgen = "0.71"
+pkg-config = "0.3"
