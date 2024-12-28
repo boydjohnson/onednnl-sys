@@ -1,5 +1,4 @@
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 fn main() {
     if let Ok(_) = pkg_config::probe_library("dnnl") {
@@ -25,9 +24,10 @@ fn main() {
                 .header("wrapper_cl_interop.h")
                 .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
                 .allowlist_item("dnnl_ocl.*")
+                .allowlist_var("CL_.*")
                 .constified_enum_module("dnnl_.*")
                 .allowlist_function(
-                    "clCreateContext|clGetPlatformIDs|clGetDeviceIDs|clCreateCommandQueue|clCreateBuffer|clCreateImage2D|clCreateImage3D",
+                    "cl.*Context|clGetPlatform.*|clGetDevice.*|cl.*CommandQueue|cl.*Buffer|clCreateImage2D|clCreateImage3D",
                 )
                 .raw_line("use crate::*;")
                 .blocklist_type("dnnl_engine_t|dnnl_engine|dnnl_status_t|dnnl_memory|dnnl_memory_t|dnnl_primitive|const_dnnl_primitive_t|dnnl_exec_arg_t|dnnl_memory_desc|const_dnnl_memory_desc_t|dnnl_stream|dnnl_stream_t|const_dnnl_memory_t")
@@ -41,6 +41,7 @@ fn main() {
             bindings
                 .write_to_file(out_path.join("ocl_bindings.rs"))
                 .expect("Couldn't write bindings!");
+            println!("cargo:rustc-link-lib=OpenCL");
         }
 
         if cfg!(feature = "sycl-gpu-runtime") {
