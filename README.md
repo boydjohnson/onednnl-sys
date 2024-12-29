@@ -1,6 +1,6 @@
 # oneAPI oneDNN Rust -sys bindings
 
-[![Build Status](https://github.com/boydjohnson/onednn-sycl-sys/actions/workflows/ci-intel.yml/badge.svg)](https://github.com/boydjohnson/onednn-sycl-sys/actions/workflows/ci-intel.yml)
+[![Build Status](https://github.com/boydjohnson/onednnl-sys/actions/workflows/ci-intel.yml/badge.svg)](https://github.com/boydjohnson/onednnl-sys/actions/workflows/ci-intel.yml)
 
 high-level bindings at [onednnl-rs](https://github.com/boydjohnson/onednnl-rs)
 
