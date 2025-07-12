@@ -1,26 +1,25 @@
 use std::{env, path::PathBuf};
 
 fn main() {
-    if let Ok(_) = pkg_config::probe_library("dnnl") {
-        let bindings = bindgen::Builder::default()
-            .header("wrapper.h")
-            .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
-            .allowlist_item("dnnl_.*|DNNL_.*|BUILD_.*")
-            .constified_enum_module("dnnl_.*")
-            .generate_comments(true)
-            .clang_arg("-fretain-comments-from-system-headers")
-            .generate()
-            .unwrap();
-
-        let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-        bindings
-            .write_to_file(out_path.join("bindings.rs"))
-            .expect("Couldn't write bindings!");
-
-        println!("cargo:rustc-link-lib=dnnl");
-
-        if cfg!(feature = "opencl-gpu-runtime") {
+    if !cfg!(feature = "bindings") {
+        if let Ok(_) = pkg_config::probe_library("dnnl") {
             let bindings = bindgen::Builder::default()
+                .header("wrapper.h")
+                .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+                .allowlist_item("dnnl_.*|DNNL_.*|BUILD_.*")
+                .constified_enum_module("dnnl_.*")
+                .generate_comments(true)
+                .clang_arg("-fretain-comments-from-system-headers")
+                .generate()
+                .unwrap();
+
+            let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+            bindings
+                .write_to_file(out_path.join("bindings.rs"))
+                .expect("Couldn't write bindings!");
+
+            if cfg!(feature = "opencl-gpu-runtime") {
+                let bindings = bindgen::Builder::default()
                 .header("wrapper_cl_interop.h")
                 .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
                 .allowlist_item("dnnl_ocl.*")
@@ -37,15 +36,15 @@ fn main() {
                 .generate()
                 .unwrap();
 
-            let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-            bindings
-                .write_to_file(out_path.join("ocl_bindings.rs"))
-                .expect("Couldn't write bindings!");
-            println!("cargo:rustc-link-lib=OpenCL");
-        }
+                let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+                bindings
+                    .write_to_file(out_path.join("ocl_bindings.rs"))
+                    .expect("Couldn't write bindings!");
+                println!("cargo:rustc-link-lib=OpenCL");
+            }
 
-        if cfg!(feature = "sycl-gpu-runtime") {
-            let bindings = bindgen::Builder::default()
+            if cfg!(feature = "sycl-gpu-runtime") {
+                let bindings = bindgen::Builder::default()
                 .header("wrapper_sycl_interop.h")
                 .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
                 .allowlist_item("dnnl_sycl.*")
@@ -58,12 +57,15 @@ fn main() {
                 .generate()
                 .unwrap();
 
-            let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-            bindings
-                .write_to_file(out_path.join("sycl_bindings.rs"))
-                .expect("Couldn't write bindings!");
+                let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+                bindings
+                    .write_to_file(out_path.join("sycl_bindings.rs"))
+                    .expect("Couldn't write bindings!");
+            }
+        } else {
+            todo!("Build static oneDNN");
         }
-    } else {
-        todo!("Build static oneDNN");
     }
+
+    println!("cargo:rustc-link-lib=dnnl");
 }

@@ -1,17 +1,22 @@
 [package]
 name = "onednnl-sys"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
+links = "onednn"
 
 [lib]
 doctest = false
 
 [features]
+bindings = []
 opencl-gpu-runtime = []
-sycl-gpu-runtime = []  
+sycl-gpu-runtime = []
 
 [dependencies]
 
 [build-dependencies]
 bindgen = "0.71"
 pkg-config = "0.3"
+
+[package.metadata.docs.rs]
+all-features = true
