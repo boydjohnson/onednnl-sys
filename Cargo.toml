@@ -3,6 +3,10 @@ name = "onednnl-sys"
 version = "0.0.1"
 edition = "2021"
 links = "onednn"
+license = "MIT OR Apache-2.0"
+description = "sys bindings to oneDNN Deep Learning Library"
+readme = "README.md"
+documentation = "https://docs.rs/onednnl-sys"
 
 [lib]
 doctest = false
